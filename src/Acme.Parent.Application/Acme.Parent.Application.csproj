@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\common.props" />
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Acme.Parent</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Bogus" Version="34.0.2" />
+    <PackageReference Include="Volo.Abp.AutoMapper" Version="7.4.0" />
+    <PackageReference Include="Volo.Abp.Ddd.Application" Version="7.4.0" />
+    <ProjectReference Include="..\Acme.Parent.Application.Contracts\Acme.Parent.Application.Contracts.csproj" />
+    <ProjectReference Include="..\Acme.Parent.Domain\Acme.Parent.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

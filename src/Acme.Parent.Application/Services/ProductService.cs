@@ -2,6 +2,7 @@
 using Acme.Parent.Kafka;
 using Acme.Parent.ServiceInterfaces;
 using Bogus;
+using DotNetCore.CAP;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -13,12 +14,12 @@ namespace Acme.Parent.Services
 {
     public class ProductService : ParentAppService, IProductService
     {
-        private readonly IDistributedEventBus _distributedEventBus;
+        private readonly ICapPublisher _publisher;
         private readonly ILogger<ProductService> _logger;
-        public ProductService(IDistributedEventBus distributedEventBus, ILogger<ProductService> logger)
+        public ProductService(ILogger<ProductService> logger, ICapPublisher publisher)
         {
-            _distributedEventBus = distributedEventBus;
             _logger = logger;
+            _publisher=publisher;
         }
         /// <summary>
         ///   <para>
@@ -62,7 +63,7 @@ namespace Acme.Parent.Services
 
                 var request = productFaker.Generate();
                 _logger.LogInformation("ProductService - PublicProduct2Kafka - Request: {Data}", System.Text.Json.JsonSerializer.Serialize(request));
-                await _distributedEventBus.PublishAsync(request);
+                await _publisher.PublishAsync("acme.parent",request);
             }
             catch (Exception ex)
             {

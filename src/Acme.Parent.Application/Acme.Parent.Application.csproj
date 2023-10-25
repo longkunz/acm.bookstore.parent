@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="Bogus" Version="34.0.2" />
+    <PackageReference Include="DotNetCore.CAP" Version="6.2.1" />
     <PackageReference Include="Volo.Abp.AutoMapper" Version="7.4.0" />
     <PackageReference Include="Volo.Abp.Ddd.Application" Version="7.4.0" />
     <ProjectReference Include="..\Acme.Parent.Application.Contracts\Acme.Parent.Application.Contracts.csproj" />

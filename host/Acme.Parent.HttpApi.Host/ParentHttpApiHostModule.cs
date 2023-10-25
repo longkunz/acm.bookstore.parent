@@ -91,6 +91,54 @@ public class ParentHttpApiHostModule : AbpModule
                     .AllowCredentials();
             });
         });
+
+        context.Services.AddCap(option =>
+        {
+            //option.UseSqlServer(cfg =>
+            //{
+            //    cfg.ConnectionString = configuration["Cap:ConnectionString"];
+            //});
+
+            option.UseMongoDB(opt =>
+            {
+                opt.DatabaseName = configuration["CAP:DBName"];
+                opt.DatabaseConnection = configuration["CAP:ConnectionString"];
+            });
+
+            option.UseKafka(opt =>
+            {
+                opt.Servers = configuration["CAP:Kafka:Connections:Default:BootstrapServers"].ToString();
+                if (!string.IsNullOrEmpty(configuration["CAP:Kafka:Protocol"]))
+                {
+                    opt.MainConfig.Add("security.protocol", configuration["CAP:Kafka:Protocol"].ToString());
+                }
+                if (!string.IsNullOrEmpty(configuration["CAP:Kafka:Mechanism"]))
+                {
+                    opt.MainConfig.Add("sasl.mechanism", configuration["CAP:Kafka:Mechanism"].ToString());
+                }
+                if (!string.IsNullOrEmpty(configuration["CAP:Kafka:Username"]))
+                {
+                    opt.MainConfig.Add("sasl.username", configuration["CAP:Kafka:Username"].ToString());
+                }
+                if (!string.IsNullOrEmpty(configuration["CAP:Kafka:Password"]))
+                {
+                    opt.MainConfig.Add("sasl.password", configuration["CAP:Kafka:Password"].ToString());
+                }
+                opt.MainConfig.Add("allow.auto.create.topics", configuration["CAP:Kafka:AutoCreateTopics"]);
+            });
+            var failedRetryCount = int.Parse(configuration["Cap:FailedRetryCount"].ToString());
+            var group = configuration["Cap:Group"].ToString();
+            var succeedMessageExpiredAfter = int.Parse(configuration["Cap:SucceedMessageExpiredAfter"].ToString());
+            var consumerThreadCount = int.Parse(configuration["Cap:ConsumerThreadCount"].ToString());
+            var failedRetryInterval = int.Parse(configuration["Cap:FailedRetryInterval"].ToString());
+
+            option.DefaultGroupName = configuration["Cap:DefaultGroupName"].ToString() ?? option.DefaultGroupName;
+            option.ConsumerThreadCount = consumerThreadCount;
+            option.FailedRetryInterval = failedRetryInterval;
+            option.FailedRetryCount = failedRetryCount;
+            option.SucceedMessageExpiredAfter = succeedMessageExpiredAfter;
+            option.UseDashboard(o => o.PathMatch = "/cap");
+        });
     }
 
     public override void OnApplicationInitialization(ApplicationInitializationContext context)
